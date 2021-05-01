@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/User/Desktop/Netrom Code Golf/FruitNinja/CodeGolf 2021 - Fruit Ninja - Sursa Cadru.cpp
+iostream
+-
+fstream
+-
+sstream
+-
+string
+-
+bitset
+-
+vector
+-
+list
+-
+set
+-
+map
+-
+algorithm
+-
+memory
+-
+iterator
+-
+functional
+-
+
