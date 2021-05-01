@@ -22,36 +22,63 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
     static int round;
     static int score;
     static int missed;
-    vector<unsigned char> lin;
-    vector<unsigned char> linSpec;
-    round++;
-    if (round == 1) {
-        for (int i = 0; i < n; ++i)
-            lin.push_back('.');
-        for (int i = 0; i < n; ++i)
-            if (i != c - 1)
-                linSpec.push_back('.');
-            else
-                linSpec.push_back('o');
+    vector<int> del;
+    struct fruitInside {
+        int currentI, currentJ;
+        unsigned char type;
 
-        for (int j = 0; j < m; ++j)
-            if (j != r - 1)
-                s.push_back(lin);
-            else
-                s.push_back(linSpec);
+        void setParameters(int i, int j, unsigned char ty) {
+            currentI = i;
+            currentJ = j;
+            type = ty;
+        }
+    };
+    static vector<fruitInside> droppedFruits;
+
+    if (round == 0) {
+        s.resize(n, vector<unsigned char>(m, '.'));
+        s[r - 1][c - 1] = 'o';
+        droppedFruits.push_back(fruitInside());
+        droppedFruits[round].setParameters(r - 1, c - 1, t);
+
     } else {
+        for (int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz) {
+            s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
+            droppedFruits[frPoz].currentI += 1;
+        }
 
+        droppedFruits.push_back(fruitInside());
+        droppedFruits[round].setParameters(r - 1, c - 1, t);
+
+        int tempSize = droppedFruits.size();
+        for (int frPoz = 0; frPoz < tempSize; ++frPoz) {
+            if (droppedFruits[frPoz].currentI >= n) {
+                missed++;
+                tempSize--;
+                droppedFruits.erase(droppedFruits.begin() + frPoz);
+            }
+        }
+        for (int frPoz = 0; frPoz < tempSize; ++frPoz) {
+            s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = 'o';
+
+        }
     }
 
-
-    cout << "Round: " << round << '\n';
+    cout << "Round: " << round + 1 << '\n';
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < m; ++j)
             cout << s[i][j];
         cout << '\n';
     }
     cout << "Score: " << score << '\n';
-
+    cout << "Missed: ";
+    if(missed > 0) {
+        for (int i = 1; i <= missed; ++i)
+            cout << 'X';
+             
+    }
+    cout << '\n' << '\n';
+    ++round;
 }
 
 int main(int argc, const char *argv[]) {
