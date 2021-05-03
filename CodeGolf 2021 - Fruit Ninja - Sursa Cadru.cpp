@@ -105,18 +105,12 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
                     break;
                 case 5:
-                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
-                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ + 1] = '.';
-                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ + 2] = '.';
-                    if (droppedFruits[frPoz].currentI + 1 < n) {
-                        s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ] = '.';
-                        s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ + 1] = '.';
-                        s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ + 2] = '.';
-                    }
-                    if (droppedFruits[frPoz].currentI + 2 < n) {
-                        s[droppedFruits[frPoz].currentI + 2][droppedFruits[frPoz].currentJ] = '.';
-                        s[droppedFruits[frPoz].currentI + 2][droppedFruits[frPoz].currentJ + 1] = '.';
-                        s[droppedFruits[frPoz].currentI + 2][droppedFruits[frPoz].currentJ + 2] = '.';
+                    for (int i = droppedFruits[frPoz].currentI; i <= droppedFruits[frPoz].currentI + 2; ++i) {
+                        if (i < n) {
+                            for (int j = droppedFruits[frPoz].currentJ; j <= droppedFruits[frPoz].currentJ + 2; ++j)
+                                s[i][j] = '.';
+                        } else
+                            break;
                     }
                     droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
                     break;
@@ -177,18 +171,12 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     }
                     break;
                 case 5:
-                    s[fruit.currentI][fruit.currentJ] = '^';
-                    s[fruit.currentI][fruit.currentJ + 1] = '^';
-                    s[fruit.currentI][fruit.currentJ + 2] = '^';
-                    if (fruit.currentI + 1 < n) {
-                        s[fruit.currentI + 1][fruit.currentJ] = '^';
-                        s[fruit.currentI + 1][fruit.currentJ + 1] = '^';
-                        s[fruit.currentI + 1][fruit.currentJ + 2] = '^';
-                    }
-                    if (fruit.currentI + 2 < n) {
-                        s[fruit.currentI + 2][fruit.currentJ] = '^';
-                        s[fruit.currentI + 2][fruit.currentJ + 1] = '^';
-                        s[fruit.currentI + 2][fruit.currentJ + 2] = '^';
+                    for (int i = fruit.currentI; i <= fruit.currentI + 2; ++i) {
+                        if (i < n)
+                            for (int j = fruit.currentJ; j <= fruit.currentJ + 2; ++j)
+                                s[i][j] = '^';
+                        else
+                            break;
                     }
                     break;
                 case 6:
