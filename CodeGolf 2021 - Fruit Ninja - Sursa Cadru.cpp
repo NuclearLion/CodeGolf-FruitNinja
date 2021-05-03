@@ -59,6 +59,11 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 s[r][c - 1] = '@';
                 s[r][c] = '@';
                 break;
+            case 5:
+                for(int i = r - 1; i <= r + 1; ++i)
+                    for(int j = c - 1; j <= c + 1; ++j)
+                        s[i][j] = '^';
+                break;
             default:
                 cout << "DEBUG 1st";
                 s[r - 1][c - 1] = 'D';
@@ -79,18 +84,34 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     break;
                 case 3:
                     s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
-                    if (droppedFruits[frPoz].currentI < n)
+                    if (droppedFruits[frPoz].currentI < n + 1)
                         s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ] = '.';
-                    if (droppedFruits[frPoz].currentI < n)
+                    if (droppedFruits[frPoz].currentI < n + 2)
                         s[droppedFruits[frPoz].currentI + 2][droppedFruits[frPoz].currentJ] = '.';
                     droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
                     break;
                 case 4:
                     s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
                     s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ + 1] = '.';
-                    if (droppedFruits[frPoz].currentI < n) {
+                    if (droppedFruits[frPoz].currentI + 1 < n) {
                         s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ] = '.';
                         s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ + 1] = '.';
+                    }
+                    droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                    break;
+                case 5:
+                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
+                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ + 1] = '.';
+                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ + 2] = '.';
+                    if (droppedFruits[frPoz].currentI + 1 < n) {
+                        s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ] = '.';
+                        s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ + 1] = '.';
+                        s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ + 2] = '.';
+                    }
+                    if (droppedFruits[frPoz].currentI + 2 < n){
+                        s[droppedFruits[frPoz].currentI + 2][droppedFruits[frPoz].currentJ] = '.';
+                        s[droppedFruits[frPoz].currentI + 2][droppedFruits[frPoz].currentJ + 1] = '.';
+                        s[droppedFruits[frPoz].currentI + 2][droppedFruits[frPoz].currentJ + 2] = '.';
                     }
                     droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
                     break;
@@ -100,24 +121,6 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     cout << "!!!DEBUG1!!!";
             }
         }
-        /*for(auto fruit : droppedFruits)
-        { //TODO look into it
-            switch (fruit.type) {
-                case 1:
-                    s[fruit.currentI][fruit.currentJ] = '.';
-                    fruit.currentI += fruit.type;
-                    break;
-                case 2:
-                    s[fruit.currentI][fruit.currentJ] = '.';
-                    s[fruit.currentI][fruit.currentJ + 1] = '.';
-                    fruit.currentI += fruit.type;
-                    break;
-                default:
-                    s[fruit.currentI][fruit.currentJ] = '.';
-                    fruit.currentI += fruit.type;
-                    cout << "!!!DEBUG1!!!";
-            }
-        }*/
 
         //delete outside fruits from the stack
         auto it = droppedFruits.begin();
@@ -156,6 +159,21 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     if(fruit.currentI + 1 < n){
                         s[fruit.currentI + 1][fruit.currentJ] = '@';
                         s[fruit.currentI + 1][fruit.currentJ + 1] = '@';
+                    }
+                    break;
+                case 5:
+                    s[fruit.currentI][fruit.currentJ] = '^';
+                    s[fruit.currentI][fruit.currentJ + 1] = '^';
+                    s[fruit.currentI][fruit.currentJ + 2] = '^';
+                    if (fruit.currentI + 1 < n){
+                        s[fruit.currentI + 1][fruit.currentJ] = '^';
+                        s[fruit.currentI + 1][fruit.currentJ + 1] = '^';
+                        s[fruit.currentI + 1][fruit.currentJ + 2] = '^';
+                    }
+                    if (fruit.currentI + 2 < n){
+                        s[fruit.currentI + 2][fruit.currentJ] = '^';
+                        s[fruit.currentI + 2][fruit.currentJ + 1] = '^';
+                        s[fruit.currentI + 2][fruit.currentJ + 2] = '^';
                     }
                     break;
                 default:
