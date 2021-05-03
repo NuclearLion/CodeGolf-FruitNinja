@@ -60,9 +60,14 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 s[r][c] = '@';
                 break;
             case 5:
-                for(int i = r - 1; i <= r + 1; ++i)
-                    for(int j = c - 1; j <= c + 1; ++j)
+                for (int i = r - 1; i <= r + 1; ++i)
+                    for (int j = c - 1; j <= c + 1; ++j)
                         s[i][j] = '^';
+                break;
+            case 6:
+                for (int i = r - 1; i <= r + 1; ++i)
+                    for (int j = c - 1; j <= c + 3; ++j)
+                        s[i][j] = '{';
                 break;
             default:
                 cout << "DEBUG 1st";
@@ -108,10 +113,20 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                         s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ + 1] = '.';
                         s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ + 2] = '.';
                     }
-                    if (droppedFruits[frPoz].currentI + 2 < n){
+                    if (droppedFruits[frPoz].currentI + 2 < n) {
                         s[droppedFruits[frPoz].currentI + 2][droppedFruits[frPoz].currentJ] = '.';
                         s[droppedFruits[frPoz].currentI + 2][droppedFruits[frPoz].currentJ + 1] = '.';
                         s[droppedFruits[frPoz].currentI + 2][droppedFruits[frPoz].currentJ + 2] = '.';
+                    }
+                    droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                    break;
+                case 6:
+                    for (int i = droppedFruits[frPoz].currentI; i <= droppedFruits[frPoz].currentI + 2; ++i) {
+                        if (i < n) {
+                            for (int j = droppedFruits[frPoz].currentJ; j <= droppedFruits[frPoz].currentJ + 4; ++j)
+                                s[i][j] = '.';
+                        } else
+                            break;
                     }
                     droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
                     break;
@@ -156,7 +171,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 case 4:
                     s[fruit.currentI][fruit.currentJ] = '@';
                     s[fruit.currentI][fruit.currentJ + 1] = '@';
-                    if(fruit.currentI + 1 < n){
+                    if (fruit.currentI + 1 < n) {
                         s[fruit.currentI + 1][fruit.currentJ] = '@';
                         s[fruit.currentI + 1][fruit.currentJ + 1] = '@';
                     }
@@ -165,15 +180,24 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     s[fruit.currentI][fruit.currentJ] = '^';
                     s[fruit.currentI][fruit.currentJ + 1] = '^';
                     s[fruit.currentI][fruit.currentJ + 2] = '^';
-                    if (fruit.currentI + 1 < n){
+                    if (fruit.currentI + 1 < n) {
                         s[fruit.currentI + 1][fruit.currentJ] = '^';
                         s[fruit.currentI + 1][fruit.currentJ + 1] = '^';
                         s[fruit.currentI + 1][fruit.currentJ + 2] = '^';
                     }
-                    if (fruit.currentI + 2 < n){
+                    if (fruit.currentI + 2 < n) {
                         s[fruit.currentI + 2][fruit.currentJ] = '^';
                         s[fruit.currentI + 2][fruit.currentJ + 1] = '^';
                         s[fruit.currentI + 2][fruit.currentJ + 2] = '^';
+                    }
+                    break;
+                case 6:
+                    for (int i = fruit.currentI; i <= fruit.currentI + 2; ++i) {
+                        if (i < n)
+                            for (int j = fruit.currentJ; j <= fruit.currentJ + 4; ++j)
+                                s[i][j] = '{';
+                        else
+                            break;
                     }
                     break;
                 default:
