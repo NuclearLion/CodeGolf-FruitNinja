@@ -18,6 +18,8 @@ int n;
 int m;
 std::vector<std::vector<unsigned char>> s;
 
+ofstream out("output.out");
+
 void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
     static int round;
     static int score;
@@ -25,30 +27,44 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
     vector<int> del;
     struct fruitInside {
         int currentI, currentJ;
-        unsigned char type;
+        int type;
 
-        void setParameters(int i, int j, unsigned char ty) {
+        void setParameters(int i, int j, int ty) {
             currentI = i;
             currentJ = j;
             type = ty;
         }
     };
     static vector<fruitInside> droppedFruits;
-
+    int tInt = (int) t - '0';
     if (round == 0) {
         s.resize(n, vector<unsigned char>(m, '.'));
         s[r - 1][c - 1] = 'o';
         droppedFruits.push_back(fruitInside());
-        droppedFruits[round].setParameters(r - 1, c - 1, t);
+        droppedFruits[round].setParameters(r - 1, c - 1, tInt);
 
     } else {
+        cout << '\n' << '\n';
         for (int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz) {
-            s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
-            droppedFruits[frPoz].currentI += 1;
+            switch (droppedFruits[frPoz].type) {
+                case 1:
+                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
+                    droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                    break;
+                case 2:
+                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
+                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ + 1] = '.';
+                    droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                    break;
+                default:
+                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
+                    droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                    //cout << "!!!DEBUG1!!!";
+            }
         }
 
         droppedFruits.push_back(fruitInside());
-        droppedFruits[round].setParameters(r - 1, c - 1, t);
+        droppedFruits[round].setParameters(r - 1, c - 1, tInt);
 
         int tempSize = droppedFruits.size();
         for (int frPoz = 0; frPoz < tempSize; ++frPoz) {
@@ -59,8 +75,20 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
             }
         }
         for (int frPoz = 0; frPoz < tempSize; ++frPoz) {
-            s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = 'o';
-
+            switch (droppedFruits[frPoz].type) {
+                case 1:
+                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = 'o';
+                    break;
+                case 2:
+                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '+';
+                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ + 1] = '+';
+                    break;
+                default:
+                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '+';
+                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ + 1] = '+';
+                    /* s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = 'P';
+                     cout << "!!!DEBUG2!!!" << droppedFruits[frPoz].type << endl;*/
+            }
         }
     }
 
@@ -72,12 +100,8 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
     }
     cout << "Score: " << score << '\n';
     cout << "Missed: ";
-    if(missed > 0) {
-        for (int i = 1; i <= missed; ++i)
-            cout << 'X';
-             
-    }
-    cout << '\n' << '\n';
+    for (int i = 1; i <= missed; ++i)
+        cout << 'X';
     ++round;
 }
 
