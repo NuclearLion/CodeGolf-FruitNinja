@@ -38,15 +38,30 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
     static vector<fruitInside> droppedFruits;
     if (round == 0) { //first generation
         s.resize(n, vector<unsigned char>(m, '.'));
-        s[r - 1][c - 1] = 'o';
         droppedFruits.push_back(fruitInside());
         droppedFruits[round].setParameters(r - 1, c - 1, t);
-
+        switch (droppedFruits[0].type) {
+            case 1:
+                s[r - 1][c - 1] = 'o';
+                break;
+            case 2:
+                s[r - 1][c - 1] = '+';
+                s[r - 1][c] = '+';
+                break;
+            case 3:
+                s[r - 1][c - 1] = '(';
+                s[r][c - 1] = '(';
+                s[r + 1][c - 1] = '(';
+                break;
+            default:
+                cout << "DEBUG 1st";
+                s[r - 1][c - 1] = 'D';
+        }
     } else { //next iterations
         cout << '\n' << '\n';
         //matrix dropping. replace fruits with '.'. Increasing I in stack
         for (int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz) {
-            switch (droppedFruits[frPoz].type) {
+            switch (droppedFruits[frPoz].type) { //TODO 3rd switch
                 case 1:
                     s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
                     droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
@@ -54,6 +69,12 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 case 2:
                     s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
                     s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ + 1] = '.';
+                    droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                    break;
+                case 3:
+                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
+                    s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ] = '.';
+                    s[droppedFruits[frPoz].currentI + 2][droppedFruits[frPoz].currentJ] = '.';
                     droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
                     break;
                 default:
@@ -97,7 +118,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
         droppedFruits[iter].setParameters(r - 1, c - 1, t);
         //draw the new matrix
         for(auto fruit : droppedFruits){
-            switch (fruit.type) {
+            switch (fruit.type) { //TODO 3rd switch
                 case 1:
                     s[fruit.currentI][fruit.currentJ] = 'o';
                     break;
@@ -105,11 +126,19 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     s[fruit.currentI][fruit.currentJ] = '+';
                     s[fruit.currentI][fruit.currentJ + 1] = '+';
                     break;
+                case 3:
+                    //cout << "\n stii tu ce " << fruit.currentI << " runda " << round << '\n';
+                    s[fruit.currentI][fruit.currentJ] = '(';
+                    if(fruit.currentI + 1 < n)
+                        s[fruit.currentI + 1][fruit.currentJ] = '(';
+                    if(fruit.currentI + 2 < n)
+                        s[fruit.currentI + 2][fruit.currentJ] = '(';
+                    break;
                 default:
                     cout << "CurrentI " << fruit.currentI << " CurrentJ "
                          << fruit.currentJ << " type " << fruit.type;
                     cout << "!!!DEBUG2!!!";
-                    s[fruit.currentI][fruit.currentJ] = 'P';
+                    s[fruit.currentI][fruit.currentJ] = 'D';
             }
         }
     }
