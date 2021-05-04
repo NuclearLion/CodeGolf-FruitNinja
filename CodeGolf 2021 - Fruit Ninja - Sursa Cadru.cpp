@@ -173,7 +173,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
 
 
         ///ADD fruits or CUT fruits
-        if (t != '-') { //ADD
+        if (t >= 48 && t <= 71) { //ADD
             //add new fruits in the stack
             int iter = droppedFruits.size();
             droppedFruits.push_back(fruitInside());
@@ -184,20 +184,28 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     for (int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz) {
                         for (int Xc = c - 1; Xc <= c - 2 + l; ++Xc)
                             if ((droppedFruits[frPoz].currentI <= r - 1 || droppedFruits[frPoz].finalI >= r - 1) &&
-                                (droppedFruits[frPoz].currentJ <= Xc || droppedFruits[frPoz].finalJ >= Xc)) {
+                                (droppedFruits[frPoz].currentJ <= Xc && droppedFruits[frPoz].finalJ >= Xc)) { //changed from ||
                                 droppedFruits[frPoz].cut = true;
                             }
                     }
-                    auto it = droppedFruits.begin();
-                    while (it != droppedFruits.end()) {
-                        if (it->cut == true) {
-                            score += it->type;
-                            it = droppedFruits.erase(it);
-                        } else {
-                            ++it;
-                        }
+                    break;
+                case '|':
+                    for(int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz){
+                        for(int Xr = r - 1; Xr <= r - 2 + l; ++Xr)
+                            if((droppedFruits[frPoz].currentI <= Xr || droppedFruits[frPoz].finalI >= Xr) &&
+                               (droppedFruits[frPoz].currentJ <= c - 1 && droppedFruits[frPoz].finalJ >= c - 1)) //changed from ||
+                                droppedFruits[frPoz].cut = true;
                     }
                     break;
+            }
+            auto it = droppedFruits.begin();
+            while (it != droppedFruits.end()) {
+                if (it->cut == true) {
+                    score += it->type;
+                    it = droppedFruits.erase(it);
+                } else {
+                    ++it;
+                }
             }
         }
 
