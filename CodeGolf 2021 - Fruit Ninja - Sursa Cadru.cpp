@@ -29,13 +29,39 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
         int currentI, currentJ;
         int type;
         int finalI, finalJ;
+        bool cut = false;
+
         void setParameters(int i, int j, int ty) {
             currentI = i;
             currentJ = j;
             type = ty - '0';
             switch (type) {
+                case 1:
+                    finalI = i;
+                    finalJ = j;
+                    break;
+                case 2:
+                    finalI = i;
+                    finalJ = j + 1;
+                    break;
+                case 3:
+                    finalI = i + 2;
+                    finalJ = j;
+                    break;
+                case 4:
+                    finalI = i + 1;
+                    finalJ = j + 1;
+                    break;
+                case 5:
+                    finalI = i + 2;
+                    finalJ = j + 2;
+                    break;
+                case 6:
+                    finalI = i + 2;
+                    finalJ = j + 4;
+                    break;
                 default:
-                    ;
+                    cout << "debug set parameters";
             }
         }
     };
@@ -144,6 +170,8 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 ++it;
             }
         }
+
+
         ///ADD fruits or CUT fruits
         if (t != '-') { //ADD
             //add new fruits in the stack
@@ -153,12 +181,26 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
         } else {//DELETE
             switch (t) {
                 case '-':
-                    for (int j = c - 1; j <= c - 1 + l; ++j){
-
+                    for (int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz) {
+                        for (int Xc = c - 1; Xc <= c - 2 + l; ++Xc)
+                            if ((droppedFruits[frPoz].currentI <= r - 1 || droppedFruits[frPoz].finalI >= r - 1) &&
+                                (droppedFruits[frPoz].currentJ <= Xc || droppedFruits[frPoz].finalJ >= Xc)) {
+                                droppedFruits[frPoz].cut = true;
+                            }
+                    }
+                    auto it = droppedFruits.begin();
+                    while (it != droppedFruits.end()) {
+                        if (it->cut == true) {
+                            score += it->type;
+                            it = droppedFruits.erase(it);
+                        } else {
+                            ++it;
+                        }
                     }
                     break;
             }
         }
+
         //draw the new matrix
         for (auto fruit : droppedFruits) {
             switch (fruit.type) {
