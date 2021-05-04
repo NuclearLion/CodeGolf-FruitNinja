@@ -28,11 +28,15 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
     struct fruitInside {
         int currentI, currentJ;
         int type;
-
+        int finalI, finalJ;
         void setParameters(int i, int j, int ty) {
             currentI = i;
             currentJ = j;
             type = ty - '0';
+            switch (type) {
+                default:
+                    ;
+            }
         }
     };
     static vector<fruitInside> droppedFruits;
@@ -130,7 +134,6 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     cout << "!!!DEBUG1!!!";
             }
         }
-
         //delete outside fruits from the stack
         auto it = droppedFruits.begin();
         while (it != droppedFruits.end()) {
@@ -141,71 +144,70 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 ++it;
             }
         }
-
         ///ADD fruits or CUT fruits
         if (t != '-') { //ADD
             //add new fruits in the stack
             int iter = droppedFruits.size();
             droppedFruits.push_back(fruitInside());
             droppedFruits[iter].setParameters(r - 1, c - 1, t);
-            //draw the new matrix
-            for (auto fruit : droppedFruits) {
-                switch (fruit.type) {
-                    case 1:
-                        s[fruit.currentI][fruit.currentJ] = 'o';
-                        break;
-                    case 2:
-                        s[fruit.currentI][fruit.currentJ] = '+';
-                        s[fruit.currentI][fruit.currentJ + 1] = '+';
-                        break;
-                    case 3:
-                        s[fruit.currentI][fruit.currentJ] = '(';
-                        if (fruit.currentI + 1 < n)
-                            s[fruit.currentI + 1][fruit.currentJ] = '(';
-                        if (fruit.currentI + 2 < n)
-                            s[fruit.currentI + 2][fruit.currentJ] = '(';
-                        break;
-                    case 4:
-                        s[fruit.currentI][fruit.currentJ] = '@';
-                        s[fruit.currentI][fruit.currentJ + 1] = '@';
-                        if (fruit.currentI + 1 < n) {
-                            s[fruit.currentI + 1][fruit.currentJ] = '@';
-                            s[fruit.currentI + 1][fruit.currentJ + 1] = '@';
-                        }
-                        break;
-                    case 5:
-                        for (int i = fruit.currentI; i <= fruit.currentI + 2; ++i) {
-                            if (i < n)
-                                for (int j = fruit.currentJ; j <= fruit.currentJ + 2; ++j)
-                                    s[i][j] = '^';
-                            else
-                                break;
-                        }
-                        break;
-                    case 6:
-                        for (int i = fruit.currentI; i <= fruit.currentI + 2; ++i) {
-                            if (i < n)
-                                for (int j = fruit.currentJ; j <= fruit.currentJ + 4; ++j)
-                                    s[i][j] = '{';
-                            else
-                                break;
-                        }
-                        break;
-                    default:
-                        cout << "CurrentI " << fruit.currentI << " CurrentJ "
-                             << fruit.currentJ << " type " << fruit.type;
-                        cout << "!!!DEBUG2!!!";
-                        s[fruit.currentI][fruit.currentJ] = 'D';
-                }
-            }
         } else {//DELETE
             switch (t) {
                 case '-':
-                    for (int j = c - 1; j <= c - 1 + l; ++j)
-                        
-                        break;
-            }
+                    for (int j = c - 1; j <= c - 1 + l; ++j){
 
+                    }
+                    break;
+            }
+        }
+        //draw the new matrix
+        for (auto fruit : droppedFruits) {
+            switch (fruit.type) {
+                case 1:
+                    s[fruit.currentI][fruit.currentJ] = 'o';
+                    break;
+                case 2:
+                    s[fruit.currentI][fruit.currentJ] = '+';
+                    s[fruit.currentI][fruit.currentJ + 1] = '+';
+                    break;
+                case 3:
+                    s[fruit.currentI][fruit.currentJ] = '(';
+                    if (fruit.currentI + 1 < n)
+                        s[fruit.currentI + 1][fruit.currentJ] = '(';
+                    if (fruit.currentI + 2 < n)
+                        s[fruit.currentI + 2][fruit.currentJ] = '(';
+                    break;
+                case 4:
+                    s[fruit.currentI][fruit.currentJ] = '@';
+                    s[fruit.currentI][fruit.currentJ + 1] = '@';
+                    if (fruit.currentI + 1 < n) {
+                        s[fruit.currentI + 1][fruit.currentJ] = '@';
+                        s[fruit.currentI + 1][fruit.currentJ + 1] = '@';
+                    }
+                    break;
+                case 5:
+                    for (int i = fruit.currentI; i <= fruit.currentI + 2; ++i) {
+                        if (i < n)
+                            for (int j = fruit.currentJ; j <= fruit.currentJ + 2; ++j)
+                                s[i][j] = '^';
+                        else
+                            break;
+                    }
+                    break;
+                case 6:
+                    for (int i = fruit.currentI; i <= fruit.currentI + 2; ++i) {
+                        if (i < n)
+                            for (int j = fruit.currentJ; j <= fruit.currentJ + 4; ++j)
+                                s[i][j] = '{';
+                        else
+                            break;
+                    }
+                    break;
+                default:
+                    cout << "CurrentI " << fruit.currentI << " CurrentJ "
+                         << fruit.currentJ << " type " << fruit.type;
+                    cout << "!!!DEBUG2!!!";
+                    s[fruit.currentI][fruit.currentJ] = 'D';
+            }
         }
     }
 
