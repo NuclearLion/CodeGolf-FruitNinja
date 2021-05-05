@@ -217,6 +217,20 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                         }
                     }
                     break;
+                case '\\':
+                    for (int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz) {
+                        int Xr = r - 1;
+                        int Xc = c - 1;
+                        while (Xr >= r - l - 2) {
+                            if ((droppedFruits[frPoz].currentI <= Xr && droppedFruits[frPoz].finalI >= Xr) &&
+                                (droppedFruits[frPoz].currentJ <= Xc &&
+                                 droppedFruits[frPoz].finalJ >= Xc))
+                                droppedFruits[frPoz].cut = true;
+                            --Xr;
+                            --Xc;
+                        }
+                    }
+                    break;
                 default:
                     cout << "DEBUG cutting";
             }
