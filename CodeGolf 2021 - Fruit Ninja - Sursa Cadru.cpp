@@ -111,11 +111,13 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 case 1:
                     s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
                     droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                    droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
                     break;
                 case 2:
                     s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
                     s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ + 1] = '.';
                     droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                    droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
                     break;
                 case 3:
                     s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
@@ -124,6 +126,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     if (droppedFruits[frPoz].currentI + 2 < n)
                         s[droppedFruits[frPoz].currentI + 2][droppedFruits[frPoz].currentJ] = '.';
                     droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                    droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
                     break;
                 case 4:
                     s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
@@ -133,6 +136,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                         s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ + 1] = '.';
                     }
                     droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                    droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
                     break;
                 case 5:
                     for (int i = droppedFruits[frPoz].currentI; i <= droppedFruits[frPoz].currentI + 2; ++i) {
@@ -143,6 +147,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                             break;
                     }
                     droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                    droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
                     break;
                 case 6:
                     for (int i = droppedFruits[frPoz].currentI; i <= droppedFruits[frPoz].currentI + 2; ++i) {
@@ -153,6 +158,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                             break;
                     }
                     droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                    droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
                     break;
                 default:
                     s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
@@ -171,7 +177,6 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
             }
         }
 
-
         ///ADD fruits or CUT fruits
         if (t >= 48 && t <= 71) { //ADD
             //add new fruits in the stack
@@ -184,19 +189,36 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     for (int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz) {
                         for (int Xc = c - 1; Xc <= c - 2 + l; ++Xc)
                             if ((droppedFruits[frPoz].currentI <= r - 1 || droppedFruits[frPoz].finalI >= r - 1) &&
-                                (droppedFruits[frPoz].currentJ <= Xc && droppedFruits[frPoz].finalJ >= Xc)) { //changed from ||
+                                (droppedFruits[frPoz].currentJ <= Xc && droppedFruits[frPoz].finalJ >= Xc)) {
                                 droppedFruits[frPoz].cut = true;
                             }
                     }
                     break;
                 case '|':
-                    for(int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz){
-                        for(int Xr = r - 1; Xr <= r - 2 + l; ++Xr)
-                            if((droppedFruits[frPoz].currentI <= Xr || droppedFruits[frPoz].finalI >= Xr) &&
-                               (droppedFruits[frPoz].currentJ <= c - 1 && droppedFruits[frPoz].finalJ >= c - 1)) //changed from ||
+                    for (int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz) {
+                        for (int Xr = r - 1; Xr <= r - 2 + l; ++Xr)
+                            if ((droppedFruits[frPoz].currentI <= Xr || droppedFruits[frPoz].finalI >= Xr) &&
+                                (droppedFruits[frPoz].currentJ <= c - 1 && droppedFruits[frPoz].finalJ >= c - 1))
                                 droppedFruits[frPoz].cut = true;
                     }
                     break;
+                case '/':
+                    for (int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz) {
+                        int Xr = r - 1;
+                        int Xc = c - 1;
+                        while (Xc <= c - 2 + l) {
+                            if ((droppedFruits[frPoz].currentI <= Xr && droppedFruits[frPoz].finalI >= Xr) &&
+                                (droppedFruits[frPoz].currentJ <= Xc &&
+                                 droppedFruits[frPoz].finalJ >= Xc))
+                                droppedFruits[frPoz].cut = true;
+                            //s[Xr][Xc] = 'C';
+                            --Xr;
+                            ++Xc;
+                        }
+                    }
+                    break;
+                default:
+                    cout << "DEBUG cutting";
             }
             auto it = droppedFruits.begin();
             while (it != droppedFruits.end()) {
