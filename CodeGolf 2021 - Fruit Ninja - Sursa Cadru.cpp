@@ -24,6 +24,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
     static int round;
     static int score;
     static int missed;
+    static bool redrawn = false;
     vector<int> del;
     struct fruitInside {
         int currentI, currentJ;
@@ -66,7 +67,8 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
         }
     };
     static vector<fruitInside> droppedFruits;
-    if (round == 0) { //first generation
+
+    if (round == 0) { ///first generation
         s.resize(n, vector<unsigned char>(m, '.'));
         droppedFruits.push_back(fruitInside());
         droppedFruits[round].setParameters(r - 1, c - 1, t);
@@ -103,92 +105,160 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 cout << "DEBUG 1st";
                 s[r - 1][c - 1] = 'D';
         }
-    } else { //next iterations
+    } else { ///next iterations
         cout << '\n' << '\n';
-        //matrix dropping. replace fruits with '.'. Increasing I in stack
-        for (int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz) {
-            switch (droppedFruits[frPoz].type) {
-                case 1:
-                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
-                    droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
-                    droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
-                    break;
-                case 2:
-                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
-                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ + 1] = '.';
-                    droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
-                    droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
-                    break;
-                case 3:
-                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
-                    if (droppedFruits[frPoz].currentI + 1 < n)
-                        s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ] = '.';
-                    if (droppedFruits[frPoz].currentI + 2 < n)
-                        s[droppedFruits[frPoz].currentI + 2][droppedFruits[frPoz].currentJ] = '.';
-                    droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
-                    droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
-                    break;
-                case 4:
-                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
-                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ + 1] = '.';
-                    if (droppedFruits[frPoz].currentI + 1 < n) {
-                        s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ] = '.';
-                        s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ + 1] = '.';
-                    }
-                    droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
-                    droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
-                    break;
-                case 5:
-                    for (int i = droppedFruits[frPoz].currentI; i <= droppedFruits[frPoz].currentI + 2; ++i) {
-                        if (i < n) {
-                            for (int j = droppedFruits[frPoz].currentJ; j <= droppedFruits[frPoz].currentJ + 2; ++j)
-                                s[i][j] = '.';
-                        } else
-                            break;
-                    }
-                    droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
-                    droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
-                    break;
-                case 6:
-                    for (int i = droppedFruits[frPoz].currentI; i <= droppedFruits[frPoz].currentI + 2; ++i) {
-                        if (i < n) {
-                            for (int j = droppedFruits[frPoz].currentJ; j <= droppedFruits[frPoz].currentJ + 4; ++j)
-                                s[i][j] = '.';
-                        } else
-                            break;
-                    }
-                    droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
-                    droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
-                    break;
-                default:
-                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
-                    droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
-                    cout << "!!!DEBUG1!!!";
+        ///matrix dropping. replace fruits with '.'. Increasing I in stack
+        if (missed < 3) {
+            for (int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz) {
+                switch (droppedFruits[frPoz].type) {
+                    case 1:
+                        s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
+                        droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                        droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
+                        break;
+                    case 2:
+                        s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
+                        s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ + 1] = '.';
+                        droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                        droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
+                        break;
+                    case 3:
+                        s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
+                        if (droppedFruits[frPoz].currentI + 1 < n)
+                            s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ] = '.';
+                        if (droppedFruits[frPoz].currentI + 2 < n)
+                            s[droppedFruits[frPoz].currentI + 2][droppedFruits[frPoz].currentJ] = '.';
+                        droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                        droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
+                        break;
+                    case 4:
+                        s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
+                        s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ + 1] = '.';
+                        if (droppedFruits[frPoz].currentI + 1 < n) {
+                            s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ] = '.';
+                            s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ + 1] = '.';
+                        }
+                        droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                        droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
+                        break;
+                    case 5:
+                        for (int i = droppedFruits[frPoz].currentI; i <= droppedFruits[frPoz].currentI + 2; ++i) {
+                            if (i < n) {
+                                for (int j = droppedFruits[frPoz].currentJ; j <= droppedFruits[frPoz].currentJ + 2; ++j)
+                                    s[i][j] = '.';
+                            } else
+                                break;
+                        }
+                        droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                        droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
+                        break;
+                    case 6:
+                        for (int i = droppedFruits[frPoz].currentI; i <= droppedFruits[frPoz].currentI + 2; ++i) {
+                            if (i < n) {
+                                for (int j = droppedFruits[frPoz].currentJ; j <= droppedFruits[frPoz].currentJ + 4; ++j)
+                                    s[i][j] = '.';
+                            } else
+                                break;
+                        }
+                        droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                        droppedFruits[frPoz].finalI += droppedFruits[frPoz].type;
+                        break;
+                    default:
+                        s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '.';
+                        droppedFruits[frPoz].currentI += droppedFruits[frPoz].type;
+                        cout << "!!!DEBUG1!!!";
+                }
+            }
+            ///delete outside fruits from the stack
+            auto it = droppedFruits.begin();
+            while (it != droppedFruits.end()) {
+                if (it->currentI >= n) {
+                    it = droppedFruits.erase(it);
+                    missed++;
+                } else {
+                    ++it;
+                }
             }
         }
-        //delete outside fruits from the stack
-        auto it = droppedFruits.begin();
-        while (it != droppedFruits.end()) {
-            if (it->currentI >= n) {
-                it = droppedFruits.erase(it);
-                missed++;
-            } else {
-                ++it;
+        ///GAME OVER
+        if (missed == 3) {
+            if(redrawn == false)
+            {
+                for (auto fruit : droppedFruits) {
+                    switch (fruit.type) {
+                        case 1:
+                            s[fruit.currentI][fruit.currentJ] = 'o';
+                            break;
+                        case 2:
+                            s[fruit.currentI][fruit.currentJ] = '+';
+                            s[fruit.currentI][fruit.currentJ + 1] = '+';
+                            break;
+                        case 3:
+                            s[fruit.currentI][fruit.currentJ] = '(';
+                            if (fruit.currentI + 1 < n)
+                                s[fruit.currentI + 1][fruit.currentJ] = '(';
+                            if (fruit.currentI + 2 < n)
+                                s[fruit.currentI + 2][fruit.currentJ] = '(';
+                            break;
+                        case 4:
+                            s[fruit.currentI][fruit.currentJ] = '@';
+                            s[fruit.currentI][fruit.currentJ + 1] = '@';
+                            if (fruit.currentI + 1 < n) {
+                                s[fruit.currentI + 1][fruit.currentJ] = '@';
+                                s[fruit.currentI + 1][fruit.currentJ + 1] = '@';
+                            }
+                            break;
+                        case 5:
+                            for (int i = fruit.currentI; i <= fruit.currentI + 2; ++i) {
+                                if (i < n)
+                                    for (int j = fruit.currentJ; j <= fruit.currentJ + 2; ++j)
+                                        s[i][j] = '^';
+                                else
+                                    break;
+                            }
+                            break;
+                        case 6:
+                            for (int i = fruit.currentI; i <= fruit.currentI + 2; ++i) {
+                                if (i < n)
+                                    for (int j = fruit.currentJ; j <= fruit.currentJ + 4; ++j)
+                                        s[i][j] = '{';
+                                else
+                                    break;
+                            }
+                            break;
+                        default:
+                            cout << "CurrentI " << fruit.currentI << " CurrentJ "
+                                 << fruit.currentJ << " type " << fruit.type;
+                            cout << "!!!DEBUG2!!!";
+                            s[fruit.currentI][fruit.currentJ] = 'D';
+                    }
+                }
+                redrawn = true;
             }
+            //cout << '\n' << '\n';
+            cout << "Round: " << round + 1 << '\n';
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j < m; ++j)
+                    cout << s[i][j];
+                cout << '\n';
+            }
+            cout << "Score: " << score << '\n';
+            cout << "Missed: " << "XXX" << '\n' << "Game Over! You lost!";
+            ++round;
+            return;
         }
-
         ///ADD fruits or CUT fruits
         if (t >= 48 && t <= 71) { //ADD
             //add new fruits in the stack
             int iter = droppedFruits.size();
             droppedFruits.push_back(fruitInside());
             droppedFruits[iter].setParameters(r - 1, c - 1, t);
-        } else {//DELETE
+        } else {///CUT
             switch (t) {
                 case '-':
                     for (int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz) {
                         for (int Xc = c - 1; Xc <= c - 2 + l; ++Xc)
-                            if ((droppedFruits[frPoz].currentI <= r - 1 || droppedFruits[frPoz].finalI >= r - 1) &&
+                            if ((droppedFruits[frPoz].currentI <= r - 1 && droppedFruits[frPoz].finalI >= r - 1) &&
                                 (droppedFruits[frPoz].currentJ <= Xc && droppedFruits[frPoz].finalJ >= Xc)) {
                                 droppedFruits[frPoz].cut = true;
                             }
@@ -196,8 +266,8 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     break;
                 case '|':
                     for (int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz) {
-                        for (int Xr = r - 1; Xr <= r - 2 + l; ++Xr)
-                            if ((droppedFruits[frPoz].currentI <= Xr || droppedFruits[frPoz].finalI >= Xr) &&
+                        for (int Xr = r - 1; Xr >= r - l; --Xr) //deleted -2
+                            if ((droppedFruits[frPoz].currentI <= Xr && droppedFruits[frPoz].finalI >= Xr) &&
                                 (droppedFruits[frPoz].currentJ <= c - 1 && droppedFruits[frPoz].finalJ >= c - 1))
                                 droppedFruits[frPoz].cut = true;
                     }
@@ -211,7 +281,6 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                                 (droppedFruits[frPoz].currentJ <= Xc &&
                                  droppedFruits[frPoz].finalJ >= Xc))
                                 droppedFruits[frPoz].cut = true;
-                            //s[Xr][Xc] = 'C';
                             --Xr;
                             ++Xc;
                         }
@@ -221,7 +290,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     for (int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz) {
                         int Xr = r - 1;
                         int Xc = c - 1;
-                        while (Xr >= r - l - 2) {
+                        while (Xr >= r - l) { //deleted -2
                             if ((droppedFruits[frPoz].currentI <= Xr && droppedFruits[frPoz].finalI >= Xr) &&
                                 (droppedFruits[frPoz].currentJ <= Xc &&
                                  droppedFruits[frPoz].finalJ >= Xc))
@@ -297,7 +366,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
         }
     }
 
-    //display
+    ///display
     cout << "Round: " << round + 1 << '\n';
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < m; ++j)
