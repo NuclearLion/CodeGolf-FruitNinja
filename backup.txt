@@ -1,26 +1,3 @@
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <bitset>
-#include <vector>
-#include <list>
-#include <set>
-#include <map>
-#include <algorithm>
-#include <memory>
-#include <iterator>
-#include <functional>
-
-using namespace std;
-
-int n;
-int m;
-std::vector<std::vector<unsigned char>> s;
-
-ofstream fout("output.out");
-
-void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
     static int round;
     static int score;
     static int missed;
@@ -361,6 +338,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 }
             }
         }
+
         //draw the new matrix
         for (int frPoz = droppedFruits.size() - 1; frPoz >= 0; --frPoz) {
             switch (droppedFruits[frPoz].type) {
@@ -390,6 +368,14 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                         }
                         else
                             break;
+
+
+                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = '@';
+                    s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ + 1] = '@';
+                    if (droppedFruits[frPoz].currentI + 1 < n) {
+                        s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ] = '@';
+                        s[droppedFruits[frPoz].currentI + 1][droppedFruits[frPoz].currentJ + 1] = '@';
+                    }
                     break;
                 case 5:
                     for (int i = droppedFruits[frPoz].currentI; i <= droppedFruits[frPoz].currentI + 2; ++i) {
@@ -426,8 +412,10 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     cout << "!!!DEBUG2!!!";
                     s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = 'D';
             }
+            //++tmpIt;
         }
     }
+
     ///display
     cout << "Round: " << round + 1 << '\n';
     for (int i = 0; i < n; ++i) {
@@ -440,41 +428,3 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
     for (int i = 1; i <= missed; ++i)
         cout << 'X';
     ++round;
-}
-
-int main(int argc, const char *argv[]) {
-    if (argc == 1) {
-        cout << "No arguments";
-        return 1;
-    }
-
-    string inputFile = argv[1];
-    ifstream in("test.txt");
-    std::streambuf *cinbuf = std::cin.rdbuf();      // save stdin buffer
-    std::cin.rdbuf(in.rdbuf());                     // redirect std::cin to input file (.in)
-    if (!in.is_open()) {
-        cout << "Cannot open input file";
-        return 1;
-    }
-
-    string line;
-
-    getline(in, line);
-    std::istringstream smn(line);
-    smn >> n >> m;
-
-    unsigned char t;
-    int r, c, l;
-    while (getline(in, line)) {
-        std::istringstream ss(line);
-        ss >> t >> r >> c;
-        if (ss >> l) {
-            f(t, (unsigned char) r, (unsigned char) c, (unsigned char) l);
-        } else {
-            f(t, (unsigned char) r, (unsigned char) c, NULL);
-        }
-    }
-
-    std::cin.rdbuf(cinbuf);                        // reset to stdin again
-    return 0;
-}
