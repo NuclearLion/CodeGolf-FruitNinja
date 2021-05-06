@@ -65,29 +65,29 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     finalJ = j + 2;
                     break;
                 default:
-                    fout << "debug set parameters";
+                    cout << "debug set parameters";
             }
         }
     };
     static vector<fruitInside> droppedFruits;
 
     auto displayMatrix = [](bool gameOver) {
-        fout << "Round: " << round + 1 << '\n';
+        cout << "Round: " << round + 1 << '\n';
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < m; ++j)
-                fout << s[i][j];
-            fout << '\n';
+                cout << s[i][j];
+            cout << '\n';
         }
-        fout << "Score: " << score << '\n';
-        fout << "Missed: ";
+        cout << "Score: " << score << '\n';
+        cout << "Missed: ";
         for (int i = 1; i <= missed; ++i)
-            fout << 'X';
+            cout << 'X';
         if (gameOver)
-            fout << '\n' << "Game Over! You lost!";
+            cout << '\n' << "Game Over! You lost!";
     };
 
     auto decr = [](fruitInside a, fruitInside b) {
-        if(a.type == 7)
+        if (a.type == 6 && b.type == 7)
             return a.type < b.type;
         else
             return a.type > b.type;
@@ -120,16 +120,20 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
             case 5:
                 for (int i = X; i <= X + 2; ++i)
                     if (i < n)
-                        for (int j = Y; j <= Y + 2; ++j)
-                            s[i][j] = '^';
+                        for (int j = Y; j <= Y + 2; ++j) {
+                            if (s[i][j] != '$')
+                                s[i][j] = '^';
+                        }
                     else
                         break;
                 break;
             case 6:
                 for (int i = X; i <= X + 2; ++i)
                     if (i < n)
-                        for (int j = Y; j <= Y + 4; ++j)
-                            s[i][j] = '{';
+                        for (int j = Y; j <= Y + 4; ++j) {
+                            if (s[i][j] != '$')
+                                s[i][j] = '{';
+                        }
                     else
                         break;
                 break;
@@ -142,7 +146,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                         break;
                 break;
             default:
-                fout << "\n DEBUG PROBLEM IN FUNCTION FOR DRAWING A FRUIT INSIDE \n";
+                cout << "\n DEBUG PROBLEM IN FUNCTION FOR DRAWING A FRUIT INSIDE \n";
         }
     };
 
@@ -214,7 +218,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 }
                 break;
             default:
-                fout << "DEBUG cutting";
+                cout << "DEBUG cutting";
         }
 
     };
@@ -227,7 +231,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
             drawFruitInside(droppedFruits[round], r - 1, c - 1);
         }
     } else { ///next iterations
-        fout << '\n' << '\n';
+        cout << '\n' << '\n';
         ///matrix dropping. replace fruits with '.'. Increasing I in stack
         if (missed < 3) {
             for (auto &droppedFruit : droppedFruits) {
@@ -298,7 +302,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     default:
                         s[droppedFruit.currentI][droppedFruit.currentJ] = '.';
                         droppedFruit.currentI += droppedFruit.type;
-                        fout << "!!!DEBUG1!!!";
+                        cout << "!!!DEBUG1!!!";
                 }
             }
             ///delete outside fruits from the stack
@@ -364,7 +368,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
 
 int main(int argc, const char *argv[]) {
     if (argc == 1) {
-        fout << "No arguments";
+        cout << "No arguments";
         return 1;
     }
 
@@ -373,7 +377,7 @@ int main(int argc, const char *argv[]) {
     std::streambuf *cinbuf = std::cin.rdbuf();      // save stdin buffer
     std::cin.rdbuf(in.rdbuf());                     // redirect std::cin to input file (.in)
     if (!in.is_open()) {
-        fout << "Cannot open input file";
+        cout << "Cannot open input file";
         return 1;
     }
 
