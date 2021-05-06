@@ -369,23 +369,22 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     s[fruit.currentI][fruit.currentJ] = 'o';
                     break;
                 case 2:
-                    s[fruit.currentI][fruit.finalJ] = '+';
-                    cout << "\n pozitie +" << fruit.currentI << " " << fruit.currentJ  << " " << s[17][5] << '\n'; //todo del
+                    s[fruit.currentI][fruit.currentJ] = '+';
                     break;
                 case 3:
-                    s[fruit.currentI][fruit.finalJ] = '(';
+                    s[fruit.currentI][fruit.currentJ] = '(';
                     break;
                 case 4:
-                    s[fruit.currentI][fruit.finalJ] = '@';
+                    s[fruit.currentI][fruit.currentJ] = '@';
                     break;
                 case 5:
-                    s[fruit.currentI][fruit.finalJ] = '^';
+                    s[fruit.currentI][fruit.currentJ] = '^';
                     break;
                 case 6:
-                    s[fruit.currentI][fruit.finalJ] = '{';
+                    s[fruit.currentI][fruit.currentJ] = '{';
                     break;
                 case 7:
-                    s[fruit.currentI][fruit.finalJ] = '$';
+                    s[fruit.currentI][fruit.currentJ] = '$';
                     break;
             }
         }
@@ -398,14 +397,13 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     break;
                 case 2:
                     for(int j = droppedFruits[frPoz].currentJ + 1; j <= droppedFruits[frPoz].currentJ + 1; ++j)
-                        if(s[droppedFruits[frPoz].currentI][j] == '.')
+                        if(s[droppedFruits[frPoz].currentI][j] == '.' || frPoz == droppedFruits.size() - 1)
                             s[droppedFruits[frPoz].currentI][j] = '+';
                     break;
                 case 3:
                     for(int i = droppedFruits[frPoz].currentI + 1; i <= droppedFruits[frPoz].currentI + 2; ++i)
                         if(i < n) {
                             if (s[i][droppedFruits[frPoz].currentJ] == '.') {
-                                cout << "\n pozitie (" << i << " " << droppedFruits[frPoz].currentJ  << '\n'; //todo del
                                 s[i][droppedFruits[frPoz].currentJ] = '(';
                             }
                         }
