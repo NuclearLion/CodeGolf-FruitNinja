@@ -71,6 +71,27 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
     };
     static vector<fruitInside> droppedFruits;
 
+    auto displayMatrix = [](bool gameOver)
+    {
+        cout << "Round: " << round + 1 << '\n';
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j)
+                cout << s[i][j];
+            cout << '\n';
+        }
+        cout << "Score: " << score << '\n';
+        cout << "Missed: ";
+        for (int i = 1; i <= missed; ++i)
+            cout << 'X';
+        if(gameOver)
+            cout << '\n' << "Game Over! You lost!";
+    };
+
+    auto decr = [](fruitInside a, fruitInside b)
+    {
+        return a.type > b.type;
+    };
+
     if (round == 0) { ///first generation
         s.resize(n, vector<unsigned char>(m, '.'));
         droppedFruits.push_back(fruitInside());
@@ -263,26 +284,18 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 }
                 redrawn = true;
             }
-            //cout << '\n' << '\n';
-            cout << "Round: " << round + 1 << '\n';
-            for (int i = 0; i < n; ++i) {
-                for (int j = 0; j < m; ++j)
-                    cout << s[i][j];
-                cout << '\n';
-            }
-            cout << "Score: " << score << '\n';
-            cout << "Missed: " << "XXX" << '\n' << "Game Over! You lost!";
+            displayMatrix(true);
             ++round;
             return;
         }
         ///ADD fruits or CUT fruits
         if (t >= 48 && t <= 71) { //ADD
-            //add new fruits in the stack
+            ///add new fruits in the stack
             int iter = droppedFruits.size();
             droppedFruits.push_back(fruitInside());
             droppedFruits[iter].setParameters(r - 1, c - 1, t);
         } else {///CUT
-            switch (t) {
+            switch (t) { //todo add lambda func to every case
                 case '-':
                     for (auto & droppedFruit : droppedFruits) {
                         for (int Xc = c - 1; Xc <= c - 2 + l; ++Xc)
@@ -361,33 +374,8 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 }
             }
         }
-        ///placement of the first pivot
-        for(auto &fruit : droppedFruits)
-        {
-            switch (fruit.type) {
-                case 1:
-                    s[fruit.currentI][fruit.currentJ] = 'o';
-                    break;
-                case 2:
-                    s[fruit.currentI][fruit.currentJ] = '+';
-                    break;
-                case 3:
-                    s[fruit.currentI][fruit.currentJ] = '(';
-                    break;
-                case 4:
-                    s[fruit.currentI][fruit.currentJ] = '@';
-                    break;
-                case 5:
-                    s[fruit.currentI][fruit.currentJ] = '^';
-                    break;
-                case 6:
-                    s[fruit.currentI][fruit.currentJ] = '{';
-                    break;
-                case 7:
-                    s[fruit.currentI][fruit.currentJ] = '$';
-                    break;
-            }
-        }
+       ///decreasingly sort the vector
+       sort(droppedFruits.begin(), droppedFruits.end(), decr);
 
         ///draw the new matrix
         for (int frPoz = 0; frPoz < droppedFruits.size(); ++frPoz) {
@@ -396,16 +384,13 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     s[droppedFruits[frPoz].currentI][droppedFruits[frPoz].currentJ] = 'o';
                     break;
                 case 2:
-                    for(int j = droppedFruits[frPoz].currentJ + 1; j <= droppedFruits[frPoz].currentJ + 1; ++j)
-                        if(s[droppedFruits[frPoz].currentI][j] == '.' || frPoz == droppedFruits.size() - 1)
+                    for(int j = droppedFruits[frPoz].currentJ; j <= droppedFruits[frPoz].currentJ + 1; ++j)
                             s[droppedFruits[frPoz].currentI][j] = '+';
                     break;
                 case 3:
-                    for(int i = droppedFruits[frPoz].currentI + 1; i <= droppedFruits[frPoz].currentI + 2; ++i)
+                    for(int i = droppedFruits[frPoz].currentI; i <= droppedFruits[frPoz].currentI + 2; ++i)
                         if(i < n) {
-                            if (s[i][droppedFruits[frPoz].currentJ] == '.') {
                                 s[i][droppedFruits[frPoz].currentJ] = '(';
-                            }
                         }
                         else
                             break;
@@ -414,7 +399,6 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     for(int i = droppedFruits[frPoz].currentI; i <= droppedFruits[frPoz].currentI + 1; ++i)
                         if(i < n){
                             for(int j = droppedFruits[frPoz].currentJ; j <= droppedFruits[frPoz].currentJ + 1; ++j)
-                                if(s[i][j] == '.')
                                     s[i][j] = '@';
                         }
                         else
@@ -424,7 +408,6 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     for (int i = droppedFruits[frPoz].currentI; i <= droppedFruits[frPoz].currentI + 2; ++i) {
                         if (i < n)
                             for (int j = droppedFruits[frPoz].currentJ; j <= droppedFruits[frPoz].currentJ + 2; ++j) {
-                                if (s[i][j] == '.')
                                     s[i][j] = '^';
                             }
                         else
@@ -457,17 +440,8 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
             }
         }
     }
-    ///display
-    cout << "Round: " << round + 1 << '\n';
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j)
-            cout << s[i][j];
-        cout << '\n';
-    }
-    cout << "Score: " << score << '\n';
-    cout << "Missed: ";
-    for (int i = 1; i <= missed; ++i)
-        cout << 'X';
+    ///displayMatrix matrix
+    displayMatrix(false);
     ++round;
 }
 
