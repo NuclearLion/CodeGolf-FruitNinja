@@ -111,7 +111,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
             return a.type > b.type;
     };
 
-    auto drawFruitInside = [&](fruitInside fruit, int X, int Y) { ///appealed with fruit, currentI and current J
+    auto drawFruitInside = [&](fruitInside fruit, int X, int Y) {
         switch (fruit.type) {
             case 1:
                 s[X][Y] = 'o';
@@ -181,7 +181,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
         }
     };
 
-    auto cutFruit = [&](unsigned char type, int X, int Y, int l) { // t r c l
+    auto cutFruit = [&](unsigned char type, int X, int Y, int l) {
         if (X >= n && Y >= m) {
             broken = true;
             return;
@@ -206,6 +206,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                                 droppedFruit.cut = true;
                             } else {
                                 score += 100;
+                                break;
                             }
                         }
                 }
@@ -230,6 +231,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                                 droppedFruit.cut = true;
                             } else {
                                 score += 100;
+                                break;
                             }
                         }
                 }
@@ -255,6 +257,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                                 droppedFruit.cut = true;
                             } else {
                                 score += 100;
+                                break;
                             }
                         }
                         --Xr;
@@ -283,6 +286,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                                 droppedFruit.cut = true;
                             } else {
                                 score += 100;
+                                break;
                             }
                         }
                         --Xr;
@@ -293,17 +297,16 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
         }
     };
 
-    if (round == 0) { ///first generation
+    if (round == 0) {
         s.resize(n, vector<unsigned char>(m, '.'));
         if (r <= n && c <= m) {
             droppedFruits.push_back(fruitInside());
             droppedFruits[round].setParameters(r - 1, c - 1, t);
             drawFruitInside(droppedFruits[round], r - 1, c - 1);
         }
-    } else { ///next iterations
+    } else {
         cout << '\n' << '\n';
         if (!bombHit) {
-///matrix dropping. replace fruits with '.' Increasing I in stack
             if (broken) {
                 displayMatrix(false, false, true);
                 ++round;
@@ -315,7 +318,6 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 ++round;
                 return;
             }
-///all become '.' coordinates dropping
             if (missed < 3) {
                 if (frozen != 1) {
                     for (auto &droppedFruit : droppedFruits) {
@@ -393,21 +395,15 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                                         type;
                                 break;
                             case 7:
-                                for (
-                                        int i = droppedFruit.currentI;
-                                        i <= droppedFruit.currentI + 1; ++i) {
+                                for (int i = droppedFruit.currentI; i <= droppedFruit.currentI + 1; ++i) {
                                     if (i < n) {
-                                        for (
-                                                int j = droppedFruit.currentJ;
-                                                j <= droppedFruit.currentJ + 2; ++j)
+                                        for (int j = droppedFruit.currentJ;j <= droppedFruit.currentJ + 2; ++j)
                                             s[i][j] = '.';
                                     } else
                                         break;
                                 }
-                                droppedFruit.currentI += droppedFruit.
-                                        type;
-                                droppedFruit.finalI += droppedFruit.
-                                        type;
+                                droppedFruit.currentI += droppedFruit.type;
+                                droppedFruit.finalI += droppedFruit.type;
                                 break;
                             case 8:
                                 for (
@@ -444,7 +440,6 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     }
                 } else
                     frozen = 0;
-///delete outside fruits from the stack
                 auto it = droppedFruits.begin();
                 while (it != droppedFruits.end()) {
                     if (it->currentI >= n) {
@@ -456,7 +451,6 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     }
                 }
             }
-///GAME OVER
             if (missed == 3) {
                 if (!redrawn) {
                     for (
@@ -470,17 +464,14 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 return;
             }
 
-///ADD fruits or CUT fruits
-            if (t >= 48 && t <= 71) { ///ADD
-///add new fruits in the stack
+            if (t >= 48 && t <= 71) {
                 if (r <= n && c <= m) {
                     int iter = droppedFruits.size();
                     droppedFruits.push_back(fruitInside());
                     droppedFruits[iter].setParameters(r - 1, c - 1, t);
                 }
-            } else {///CUT
+            } else {
                 cutFruit(t, r - 1, c - 1, l);
-///delete from vector
                 auto it = droppedFruits.begin();
                 while (it != droppedFruits.end()) {
                     if (it->cut == true) {
@@ -491,14 +482,11 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     }
                 }
             }
-///decreasingly sort the vector
             sort(droppedFruits.begin(), droppedFruits.end(), decr);
-///draw the new matrix
             for (auto &droppedFruit: droppedFruits)
                 drawFruitInside(droppedFruit, droppedFruit.currentI, droppedFruit.currentJ);
         }
     }
-///displayMatrix matrix
     if (bombHit) {
         displayMatrix(false, false, false);
         ++round;
@@ -510,12 +498,14 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
             displayMatrix(false, false, true);
     }
     ++round;
+
+
 }
 
 
 int main(int argc, const char *argv[]) {
     if (argc == 1) {
-        cout << "No arguments";
+        fout << "No arguments";
         return 1;
     }
 
@@ -524,7 +514,7 @@ int main(int argc, const char *argv[]) {
     std::streambuf *cinbuf = std::cin.rdbuf();      // save stdin buffer
     std::cin.rdbuf(in.rdbuf());                     // redirect std::cin to input file (.in)
     if (!in.is_open()) {
-        cout << "Cannot open input file";
+        fout << "Cannot open input file";
         return 1;
     }
 
