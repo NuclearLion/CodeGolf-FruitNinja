@@ -25,6 +25,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
     static int score;
     static int missed;
     static bool redrawn = false;
+    static bool broken = false;
     struct fruitInside {
         int currentI, currentJ;
         int type;
@@ -71,7 +72,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
     };
     static vector<fruitInside> droppedFruits;
 
-    auto displayMatrix = [](bool gameOver, bool gameWon) {
+    auto displayMatrix = [](bool gameOver, bool gameWon, bool swordBroken) {
         cout << "Round: " << round + 1 << '\n';
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < m; ++j)
@@ -84,8 +85,10 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
             cout << 'X';
         if (gameOver)
             cout << '\n' << "Game Over! You lost!";
-        if(gameWon)
+        if (gameWon)
             cout << '\n' << "Well played! You won!";
+        if (swordBroken)
+            cout << '\n' << "Game Over! My sword is broken!";
     };
 
     auto decr = [](fruitInside a, fruitInside b) {
@@ -153,8 +156,15 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
     };
 
     auto cutFruit = [&](unsigned char type, int X, int Y, int l) { // t r c l
+        if (X >= n && Y >= m) {
+            broken = true;
+            return;
+        }
         switch (type) {
             case '-':
+                if(Y + l - 1 >=  m){
+                    broken = true;
+                }
                 for (auto &droppedFruit : droppedFruits) {
                     for (int Xc = Y; Xc <= Y - 1 + l; ++Xc)
                         if ((droppedFruit.currentI <= X && droppedFruit.finalI >= X) &&
@@ -169,6 +179,9 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 }
                 break;
             case '|':
+                if(X - l + 1 < 0){
+                    broken = true;
+                }
                 for (auto &droppedFruit : droppedFruits) {
                     for (int Xr = X; Xr >= X - l + 1; --Xr)
                         if ((droppedFruit.currentI <= Xr && droppedFruit.finalI >= Xr) &&
@@ -182,6 +195,9 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 }
                 break;
             case '/':
+                if(Y- 1 + l >= n){
+                    broken = true;
+                }
                 for (auto &droppedFruit : droppedFruits) {
                     int Xr = X;
                     int Xc = Y;
@@ -201,6 +217,9 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                 }
                 break;
             case '\\':
+                if(X - 1 - l >= n){
+                    broken = true;
+                }
                 for (auto &droppedFruit : droppedFruits) {
                     int Xr = X;
                     int Xc = Y;
@@ -235,9 +254,14 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
     } else { ///next iterations
         cout << '\n' << '\n';
         ///matrix dropping. replace fruits with '.'. Increasing I in stack
-        if(round >= 29){
-            if(missed < 3)
-                displayMatrix(false, true);
+        if (broken) {
+            displayMatrix(false, false, true);
+            ++round;
+            return;
+        }
+        if (round >= 29) {
+            if (missed < 3)
+                displayMatrix(false, true, false);
             ++round;
             return;
         }
@@ -332,7 +356,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     drawFruitInside(fruit, fruit.currentI, fruit.currentJ);
                 redrawn = true;
             }
-            displayMatrix(true, false);
+            displayMatrix(true, false, false);
             ++round;
             return;
         }
@@ -368,7 +392,10 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
 
     }
     ///displayMatrix matrix
-    displayMatrix(false, false);
+    if(!broken)
+        displayMatrix(false, false, false);
+    else
+        displayMatrix(false, false, true);
     ++round;
 }
 
