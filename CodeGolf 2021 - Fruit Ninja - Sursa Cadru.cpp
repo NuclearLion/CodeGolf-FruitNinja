@@ -71,7 +71,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
     };
     static vector<fruitInside> droppedFruits;
 
-    auto displayMatrix = [](bool gameOver) {
+    auto displayMatrix = [](bool gameOver, bool gameWon) {
         cout << "Round: " << round + 1 << '\n';
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < m; ++j)
@@ -84,6 +84,8 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
             cout << 'X';
         if (gameOver)
             cout << '\n' << "Game Over! You lost!";
+        if(gameWon)
+            cout << '\n' << "Well played! You won!";
     };
 
     auto decr = [](fruitInside a, fruitInside b) {
@@ -233,6 +235,12 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
     } else { ///next iterations
         cout << '\n' << '\n';
         ///matrix dropping. replace fruits with '.'. Increasing I in stack
+        if(round >= 29){
+            if(missed < 3)
+                displayMatrix(false, true);
+            ++round;
+            return;
+        }
         if (missed < 3) {
             for (auto &droppedFruit : droppedFruits) {
                 switch (droppedFruit.type) {
@@ -324,7 +332,7 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
                     drawFruitInside(fruit, fruit.currentI, fruit.currentJ);
                 redrawn = true;
             }
-            displayMatrix(true);
+            displayMatrix(true, false);
             ++round;
             return;
         }
@@ -360,11 +368,10 @@ void f(unsigned char t, unsigned char r, unsigned char c, unsigned char l) {
 
     }
     ///displayMatrix matrix
-    displayMatrix(false);
+    displayMatrix(false, false);
     ++round;
 }
 
-//todo solve round 7 of test 22
 
 int main(int argc, const char *argv[]) {
     if (argc == 1) {
